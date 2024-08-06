@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 30px;
+
+  .container {
+    display: flex;
+
+    p {
+      // line-height: 1;
+      // margin: 0;
+    }
+  }
+  .star {
+    display: block;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+}
