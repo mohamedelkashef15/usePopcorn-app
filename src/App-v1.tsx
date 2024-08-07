@@ -1,4 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
+/*
+
+import { ReactNode, useState } from "react";
 
 interface IMovie {
   imdbID: string;
@@ -63,25 +65,9 @@ const tempWatchedData = [
 ];
 
 const average = (arr: number[]) => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
-
-const KEY = "2e5ceddc";
-
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(function () {
-    async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=Interstellar`);
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false);
-    }
-    fetchMovies();
-  }, []);
-
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
   return (
     <>
       <NavBar>
@@ -90,7 +76,9 @@ export default function App() {
         <NumResult movies={movies} />
       </NavBar>
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies}></MovieList>}</Box>
+        <Box>
+          <MovieList movies={movies}></MovieList>
+        </Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
@@ -98,10 +86,6 @@ export default function App() {
       </Main>
     </>
   );
-}
-
-function Loader() {
-  return <p className="loader">Loading...</p>;
 }
 
 function NavBar({ children }: { children: ReactNode }) {
@@ -172,6 +156,8 @@ function WatchedBox() {
   );
 }
 */
+
+/*
 
 function MovieList({ movies }: { movies: IMovie[] }) {
   return (
@@ -259,3 +245,5 @@ function WatchedMovie({ movie }: { movie: IWatched }) {
     </li>
   );
 }
+
+*/
