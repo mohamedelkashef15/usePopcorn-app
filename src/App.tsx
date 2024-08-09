@@ -1,3 +1,12 @@
+/*
+  - Add loading effect
+
+  - handle errors 
+    - lost internet connection
+    - movie is not found 
+
+*/
+
 import { ReactNode, useEffect, useState } from "react";
 
 interface IMovie {
@@ -65,21 +74,33 @@ const tempWatchedData = [
 const average = (arr: number[]) => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 const KEY = "2e5ceddc";
+const query = "Interstellar";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(function () {
-    async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=Interstellar`);
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false);
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+
+        const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
+        if (res.ok === false) throw new Error("Something went wrong while fetching data");
+
+        const data = await res.json();
+        if (data.Response === "False") throw new Error("Movie not found");
+
+        setMovies(data.Search);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    fetchMovies();
+    fetchData();
   }, []);
 
   return (
@@ -90,7 +111,12 @@ export default function App() {
         <NumResult movies={movies} />
       </NavBar>
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies}></MovieList>}</Box>
+        <Box>
+          {/* {isLoading ? <Loader /> : <MovieList movies={movies}></MovieList>} */}
+          {!isLoading && !error && <MovieList movies={movies}></MovieList>}
+          {isLoading && <Loader />}
+          {error && <ErrorMessage message={error} />}
+        </Box>
         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
@@ -98,6 +124,10 @@ export default function App() {
       </Main>
     </>
   );
+}
+
+function ErrorMessage({ message }: { message: string }) {
+  return <p className="error">{message}</p>;
 }
 
 function Loader() {
@@ -131,7 +161,7 @@ function Search() {
 function NumResult({ movies }: { movies: IMovie[] }) {
   return (
     <p className="num-results">
-      Found <strong>{movies.length}</strong> results
+      Found <strong>{movies.length}</strong> results{" "}
     </p>
   );
 }
