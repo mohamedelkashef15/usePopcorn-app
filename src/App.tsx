@@ -86,6 +86,15 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedId, setSelectedId] = useState<null | string>(null);
+
+  function handleSelectedId(id: string) {
+    setSelectedId((selectedId) => (selectedId === id ? null : id));
+  }
+
+  function handleBackBtn() {
+    setSelectedId(null);
+  }
 
   useEffect(
     function () {
@@ -96,10 +105,10 @@ export default function App() {
 
           const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
           if (res.ok === false) throw new Error("Something went wrong while fetching data");
-          console.log(query);
+
           const data = await res.json();
           if (data.Response === "False") throw new Error("Movie not found");
-          console.log(data.Search);
+
           setMovies(data.Search);
         } catch (err) {
           setError((err as Error).message);
@@ -128,13 +137,19 @@ export default function App() {
       <Main>
         <Box>
           {/* {isLoading ? <Loader /> : <MovieList movies={movies}></MovieList>} */}
-          {!isLoading && !error && <MovieList movies={movies}></MovieList>}
+          {!isLoading && !error && <MovieList movies={movies} onSelectedId={handleSelectedId}></MovieList>}
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {selectedId ? (
+            <MovieDetails selectedId={selectedId} onBack={handleBackBtn} />
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
@@ -217,19 +232,19 @@ function WatchedBox() {
 }
 */
 
-function MovieList({ movies }: { movies: IMovie[] }) {
+function MovieList({ movies, onSelectedId }: { movies: IMovie[]; onSelectedId: (id: string) => void }) {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {movies?.map((movie) => (
-        <Movie movie={movie} key={movie.imdbID} />
+        <Movie movie={movie} key={movie.imdbID} onSelectedId={onSelectedId} />
       ))}
     </ul>
   );
 }
 
-function Movie({ movie }: { movie: IMovie }) {
+function Movie({ movie, onSelectedId }: { movie: IMovie; onSelectedId: (id: string) => void }) {
   return (
-    <li key={movie.imdbID}>
+    <li key={movie.imdbID} onClick={() => onSelectedId(movie.imdbID)}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
@@ -301,5 +316,16 @@ function WatchedMovie({ movie }: { movie: IWatched }) {
         </p>
       </div>
     </li>
+  );
+}
+
+function MovieDetails({ selectedId, onBack }: { selectedId: string; onBack: () => void }) {
+  return (
+    <div className="details">
+      <button className="btn-back" onClick={onBack}>
+        &larr;
+      </button>
+      {selectedId}
+    </div>
   );
 }

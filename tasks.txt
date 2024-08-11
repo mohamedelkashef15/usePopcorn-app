@@ -1,0 +1,17 @@
+Website functionality 
+  - Add loading effect
+
+  - handle errors 
+    - lost internet connection
+    - movie is not found 
+
+  - handle query 
+    - on typing inside search update value of query
+    - setError message to nothing before fetch any data
+    - display nothing is search query in case of length of characters less than 3 charcters
+
+  - Allow users to select movie so they can see some details about it
+    - After searching on a movie when selecting a movie display movie details in the right box by selecting id 
+
+    - create a back btn so when click it goes back and close movie 
+    - onClick on movie again it closes the movie detials
