@@ -15,3 +15,8 @@ Website functionality
 
     - create a back btn so when click it goes back and close movie 
     - onClick on movie again it closes the movie detials
+
+  - Load Movie details for selected movie in the right box
+    - we need to fetch data by id in the second box 
+    - display data UI in JSX
+    
