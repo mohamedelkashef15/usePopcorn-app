@@ -372,8 +372,6 @@ function MovieDetails({
   const isWatched = watched.map((movie: IWatched) => movie.imdbID).includes(selectedId);
   const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
 
-  console.log(isWatched);
-
   const { Poster, Title, Runtime, imdbRating, Plot, Released, Actors, Director, Genre, Year }: IMovieDetails = movie;
 
   function handleAdd() {
@@ -404,6 +402,22 @@ function MovieDetails({
     },
     [selectedId]
   );
+
+  // Change page title
+  useEffect(
+    function () {
+      // For not displaying undefined before showing the movie
+      if (!Title) return;
+      document.title = `${Title}`;
+
+      return function () {
+        document.title = "usePopcorn";
+        console.log(document.title);
+      };
+    },
+    [Title]
+  );
+
   return (
     <div className="details">
       {isLoading ? (

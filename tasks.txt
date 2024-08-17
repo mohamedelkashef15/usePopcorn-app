@@ -30,3 +30,6 @@ Website functionality
     - Don't allow dublicate movies instead if movie has been rated before display paragraph with rating 
     - Display remove button to remove movie from watched list
     - Add delete button to watched movie 
+
+  - Change page title to the Movie name when it selected
+  
