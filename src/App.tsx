@@ -35,12 +35,13 @@ interface IMovieDetails {
   Poster?: string;
   Title?: string;
   Runtime?: string;
-  ImdbRating?: string;
+  imdbRating?: string;
   Plot?: string;
   Released?: string;
   Actors?: string;
   Director?: string;
   Genre?: string;
+  Year?: string;
 }
 
 // const tempMovieData = [
@@ -96,7 +97,7 @@ const KEY = "2e5ceddc";
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState("");
-  const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState<IWatched[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState<null | string>(null);
@@ -107,6 +108,14 @@ export default function App() {
 
   function handleBackBtn() {
     setSelectedId(null);
+  }
+
+  function handleAddWatchedList(movie: IWatched) {
+    setWatched((watchedMoives: IWatched[]) => [...watchedMoives, movie]);
+  }
+
+  function handleDelete(id: string) {
+    setWatched(watched.filter((movie) => movie.imdbID !== id));
   }
 
   useEffect(
@@ -156,11 +165,16 @@ export default function App() {
         </Box>
         <Box>
           {selectedId ? (
-            <MovieDetails selectedId={selectedId} onBack={handleBackBtn} />
+            <MovieDetails
+              selectedId={selectedId}
+              onBack={handleBackBtn}
+              onAddWatched={handleAddWatchedList}
+              watched={watched}
+            />
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} />
+              <WatchedMovieList watched={watched} onDeleteItem={handleDelete} />
             </>
           )}
         </Box>
@@ -284,11 +298,11 @@ function WatchedSummary({ watched }: { watched: IWatched[] }) {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{avgImdbRating}</span>
+          <span>{avgImdbRating.toFixed(2)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{avgUserRating}</span>
+          <span>{avgUserRating.toFixed(2)}</span>
         </p>
         <p>
           <span>⏳</span>
@@ -299,17 +313,17 @@ function WatchedSummary({ watched }: { watched: IWatched[] }) {
   );
 }
 
-function WatchedMovieList({ watched }: { watched: IWatched[] }) {
+function WatchedMovieList({ watched, onDeleteItem }: { watched: IWatched[]; onDeleteItem: (id: string) => void }) {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <WatchedMovie movie={movie} key={movie.imdbID} />
+        <WatchedMovie movie={movie} key={movie.imdbID} onDeleteItem={onDeleteItem} />
       ))}
     </ul>
   );
 }
 // I watched because it watched list
-function WatchedMovie({ movie }: { movie: IWatched }) {
+function WatchedMovie({ movie, onDeleteItem }: { movie: IWatched; onDeleteItem: (id: string) => void }) {
   return (
     <li key={movie.imdbID}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -327,17 +341,54 @@ function WatchedMovie({ movie }: { movie: IWatched }) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
+        <button className="btn-delete" onClick={() => onDeleteItem(movie.imdbID)}>
+          X
+        </button>
       </div>
     </li>
   );
 }
 
-function MovieDetails({ selectedId, onBack }: { selectedId: string; onBack: () => void }) {
+function MovieDetails({
+  selectedId,
+  onBack,
+  onAddWatched,
+  watched,
+}: {
+  selectedId: string;
+  onBack: () => void;
+  onAddWatched: (movie: IWatched) => void;
+  watched: IWatched[];
+}) {
   // movie is object inside
   const [movie, setMovie] = useState<IMovieDetails>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState(0);
 
-  const { Poster, Title, Runtime, ImdbRating, Plot, Released, Actors, Director, Genre }: IMovieDetails = movie;
+  /* 
+    To check if movie is included in watched List or not 
+      - to start comparision we need to compare imdbID with selectedId
+  */
+  const isWatched = watched.map((movie: IWatched) => movie.imdbID).includes(selectedId);
+  const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
+
+  console.log(isWatched);
+
+  const { Poster, Title, Runtime, imdbRating, Plot, Released, Actors, Director, Genre, Year }: IMovieDetails = movie;
+
+  function handleAdd() {
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      Title,
+      Poster,
+      Year,
+      imdbRating: Number(imdbRating),
+      runtime: Number(Runtime?.split(" ").at(0)),
+      userRating,
+    };
+    onAddWatched(newWatchedMovie);
+    onBack();
+  }
 
   useEffect(
     function () {
@@ -345,7 +396,6 @@ function MovieDetails({ selectedId, onBack }: { selectedId: string; onBack: () =
       async function getMovieDetails() {
         const res = await fetch(`http://www.omdbapi.com/?&apikey=${KEY}&i=${selectedId}`);
         const data = await res.json();
-        // console.log(data);
         setMovie(data);
         setIsLoading(false);
       }
@@ -354,7 +404,6 @@ function MovieDetails({ selectedId, onBack }: { selectedId: string; onBack: () =
     },
     [selectedId]
   );
-
   return (
     <div className="details">
       {isLoading ? (
@@ -374,13 +423,24 @@ function MovieDetails({ selectedId, onBack }: { selectedId: string; onBack: () =
               <p>{Genre}</p>
               <p>
                 <span>⭐️</span>
-                {ImdbRating} IMDB rating
+                {imdbRating} IMDB rating
               </p>
             </div>
           </header>
           <section>
             <div className="rating">
-              <StarRating maxRating={10} size={25} color="red" />
+              {!isWatched ? (
+                <>
+                  <StarRating maxRating={10} size={25} color="red" onSetRating={setUserRating} />
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={handleAdd}>
+                      + Add to list
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p>You rated that movie with {watchedUserRating} ⭐️</p>
+              )}
             </div>
             <p>
               <em>{Plot}</em>

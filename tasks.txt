@@ -20,3 +20,13 @@ Website functionality
     - we need to fetch data by id in the second box 
     - display data UI in JSX
     
+  - Add Watched movie into list after selecting it 
+    - create add to list btn & then when click add movie to watched list 
+    - go back after clicking to btn 
+    - add user rating
+      - we need to take user rating from stars component outside into watched list movies
+    - Allow movie to be added to the list in case of rating is selected 
+    - Add userRating 
+    - Don't allow dublicate movies instead if movie has been rated before display paragraph with rating 
+    - Display remove button to remove movie from watched list
+    - Add delete button to watched movie 

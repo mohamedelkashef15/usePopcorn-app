@@ -4,6 +4,7 @@ interface IRatingStar {
   maxRating: number;
   size: number;
   color: string;
+  onSetRating: (rating: number) => void;
 }
 interface IStar {
   full: boolean;
@@ -24,7 +25,7 @@ const starContainerStyle = {
   display: "flex",
 };
 
-function RatingStar({ maxRating, size, color }: IRatingStar) {
+function RatingStar({ maxRating, size, color, onSetRating }: IRatingStar) {
   // Style
   const textStyle = {
     lineHeight: "1",
@@ -38,6 +39,7 @@ function RatingStar({ maxRating, size, color }: IRatingStar) {
 
   function handleClick(rating: number) {
     setRating(rating);
+    onSetRating(rating);
   }
   return (
     <div style={containerStyle}>
