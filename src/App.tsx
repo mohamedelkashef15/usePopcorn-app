@@ -120,20 +120,24 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchData() {
         try {
           setError("");
           setIsLoading(true);
 
-          const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
+          const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`, {
+            signal: controller.signal,
+          });
           if (res.ok === false) throw new Error("Something went wrong while fetching data");
 
           const data = await res.json();
           if (data.Response === "False") throw new Error("Movie not found");
 
           setMovies(data.Search);
+          setError("");
         } catch (err) {
-          setError((err as Error).message);
+          if ((err as Error).name !== "AbortError") setError((err as Error).message);
         } finally {
           setIsLoading(false);
         }
@@ -143,8 +147,10 @@ export default function App() {
           return;
         }
       }
-
       fetchData();
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -388,6 +394,19 @@ function MovieDetails({
     onBack();
   }
 
+  useEffect(function () {
+    function callback(e: KeyboardEvent) {
+      if (e.code === "Escape") onBack();
+      console.log("Closed");
+    }
+
+    document.addEventListener("keydown", callback);
+
+    return function () {
+      document.removeEventListener("keydown", callback);
+    };
+  });
+
   useEffect(
     function () {
       setIsLoading(true);
@@ -403,16 +422,13 @@ function MovieDetails({
     [selectedId]
   );
 
-  // Change page title
   useEffect(
     function () {
-      // For not displaying undefined before showing the movie
-      if (!Title) return;
+      if (!document.title) return;
       document.title = `${Title}`;
 
       return function () {
         document.title = "usePopcorn";
-        console.log(document.title);
       };
     },
     [Title]

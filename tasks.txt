@@ -32,4 +32,4 @@ Website functionality
     - Add delete button to watched movie 
 
   - Change page title to the Movie name when it selected
-  
+  - Use Clean up function to clean up the data fetching 
