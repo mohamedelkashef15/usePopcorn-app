@@ -1,6 +1,6 @@
 import { IWatched } from "./interfaces";
 
-const average = (arr: number[]) => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+const average = (arr: number[]) => arr.reduce((acc, cur, _, arr) => acc + cur / arr.length, 0);
 
 function WatchedSummary({ watched }: { watched: IWatched[] }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));

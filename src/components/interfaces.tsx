@@ -7,9 +7,9 @@ export interface IMovie {
 
 export interface IWatched {
   imdbID: string;
-  Title: string;
-  Year: string;
-  Poster: string;
+  Title?: string;
+  Year?: string;
+  Poster?: string;
   runtime: number;
   imdbRating: number;
   userRating: number;

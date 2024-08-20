@@ -30,7 +30,7 @@ function MovieDetails({
   const { Poster, Title, Runtime, imdbRating, Plot, Released, Actors, Director, Genre, Year }: IMovieDetails = movie;
 
   function handleAdd() {
-    const newWatchedMovie = {
+    const newWatchedMovie: IWatched = {
       imdbID: selectedId,
       Title,
       Poster,
