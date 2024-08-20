@@ -36,7 +36,7 @@ function MovieDetails({
       Poster,
       Year,
       imdbRating: Number(imdbRating),
-      runtime: Number(Runtime?.split(" ").at(0)),
+      runtime: Number(Runtime?.split(" ")[0]),
       userRating,
     };
     onAddWatched(newWatchedMovie);
