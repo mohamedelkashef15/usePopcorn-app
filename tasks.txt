@@ -33,3 +33,4 @@ Website functionality
 
   - Change page title to the Movie name when it selected
   - Use Clean up function to clean up the data fetching 
+  - Add escape keyboard btn when click it returns to watched summary component 

@@ -25,7 +25,7 @@ const starContainerStyle = {
   display: "flex",
 };
 
-function RatingStar({ maxRating, size, color, onSetRating }: IRatingStar) {
+function StarRating({ maxRating, size, color, onSetRating }: IRatingStar) {
   // Style
   const textStyle = {
     lineHeight: "1",
@@ -88,4 +88,4 @@ function Star({ full, onRating, onHoverIn, onHoverOut, color, size }: IStar) {
   );
 }
 
-export default RatingStar;
+export default StarRating;
