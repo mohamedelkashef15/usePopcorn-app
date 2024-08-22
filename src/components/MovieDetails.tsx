@@ -19,6 +19,7 @@ function MovieDetails({
   const [movie, setMovie] = useState<IMovieDetails>({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
+  // const [imdbAverage, setImdbAverage] = useState(0);
 
   /* 
     To check if movie is included in watched List or not 
@@ -42,6 +43,8 @@ function MovieDetails({
     onAddWatched(newWatchedMovie);
     onBack();
   }
+
+  const imdbAverage = (Number(imdbRating) + Number(userRating)) / 2;
 
   useEffect(function () {
     function callback(e: KeyboardEvent) {
@@ -101,7 +104,7 @@ function MovieDetails({
               <p>{Genre}</p>
               <p>
                 <span>⭐️</span>
-                {imdbRating} IMDB rating
+                {imdbRating} IMDB rating <span>{imdbAverage} IMDB Average</span>
               </p>
             </div>
           </header>

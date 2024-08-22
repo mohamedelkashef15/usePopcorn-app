@@ -34,3 +34,7 @@ Website functionality
   - Change page title to the Movie name when it selected
   - Use Clean up function to clean up the data fetching 
   - Add escape keyboard btn when click it returns to watched summary component 
+
+  - Add Watched Movies into local storage (using useEffect)
+  
+  - When using "Enter key" it will start to search 
