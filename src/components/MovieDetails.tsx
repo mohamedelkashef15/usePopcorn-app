@@ -1,5 +1,5 @@
 import { IWatched, IMovieDetails } from "./interfaces";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
 
@@ -19,7 +19,6 @@ function MovieDetails({
   const [movie, setMovie] = useState<IMovieDetails>({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
-  // const [imdbAverage, setImdbAverage] = useState(0);
 
   /* 
     To check if movie is included in watched List or not 
@@ -30,6 +29,15 @@ function MovieDetails({
 
   const { Poster, Title, Runtime, imdbRating, Plot, Released, Actors, Director, Genre, Year }: IMovieDetails = movie;
 
+  const countRef = useRef(0);
+
+  useEffect(
+    function () {
+      if (userRating) countRef.current++;
+    },
+    [userRating]
+  );
+
   function handleAdd() {
     const newWatchedMovie: IWatched = {
       imdbID: selectedId,
@@ -39,6 +47,7 @@ function MovieDetails({
       imdbRating: Number(imdbRating),
       runtime: Number(Runtime?.split(" ")[0]),
       userRating,
+      countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatchedMovie);
     onBack();

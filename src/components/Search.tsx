@@ -2,19 +2,17 @@ import { useEffect, useRef } from "react";
 
 function Search({ query, setQuery }: { query: string; setQuery: (val: string) => void }) {
   const inputEle = useRef<HTMLInputElement>(null);
-
   useEffect(
     function () {
       function callback(e: KeyboardEvent) {
         if (e.code === "Enter") {
-          inputEle.current!.focus();
+          inputEle.current?.focus();
           setQuery("");
         }
       }
-
       document.addEventListener("keypress", callback);
 
-      return () => {
+      return function () {
         document.removeEventListener("keypress", callback);
       };
     },

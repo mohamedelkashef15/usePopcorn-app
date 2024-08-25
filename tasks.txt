@@ -38,3 +38,5 @@ Website functionality
   - Add Watched Movies into local storage (using useEffect)
   
   - When using "Enter key" it will start to search 
+  
+  - create a custom "useMovies" to add effect inside the App

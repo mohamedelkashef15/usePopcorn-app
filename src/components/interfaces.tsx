@@ -13,6 +13,7 @@ export interface IWatched {
   runtime: number;
   imdbRating: number;
   userRating: number;
+  countRatingDecisions: number;
 }
 
 export interface IMovieDetails {

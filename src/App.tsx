@@ -13,20 +13,18 @@ import { WatchedMovieList } from "./components/WatchedMovieList";
 import MovieDetails from "./components/MovieDetails";
 import ErrorMessage from "./components/ErrorMessage";
 import Loader from "./components/Loader";
+import { useMovies } from "./components/useMovies";
 
-const KEY = "2e5ceddc";
 // const query = "Interstellar";
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const [selectedId, setSelectedId] = useState<null | string>(null);
   // const [watched, setWatched] = useState<IWatched[]>([]);
-  const [watched, setWatched] = useState(function () {
+  const [watched, setWatched] = useState(() => {
     const storedValue = localStorage.getItem("watched");
-    return storedValue ? JSON.parse(storedValue) : [];
+    return storedValue && JSON.parse(storedValue);
   });
 
   function handleSelectedId(id: string) {
@@ -40,7 +38,7 @@ export default function App() {
   function handleAddWatchedList(movie: IWatched) {
     setWatched((watched: IWatched[]) => [...watched, movie]);
 
-    localStorage.setItem("watched", JSON.stringify([...watched, movie]));
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDelete(id: string) {
@@ -55,44 +53,7 @@ export default function App() {
     [watched]
   );
 
-  useEffect(
-    function () {
-      const controller = new AbortController();
-      async function fetchData() {
-        try {
-          setError("");
-          setIsLoading(true);
-
-          const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`, {
-            signal: controller.signal,
-          });
-          if (res.ok === false) throw new Error("Something went wrong while fetching data");
-
-          const data = await res.json();
-          if (data.Response === "False") throw new Error("Movie not found");
-
-          setMovies(data.Search);
-          setError("");
-        } catch (err) {
-          if ((err as Error).name !== "AbortError") setError((err as Error).message);
-        } finally {
-          setIsLoading(false);
-        }
-        if (query.length < 3) {
-          setMovies([]);
-          setError("");
-          return;
-        }
-      }
-      handleBackBtn();
-
-      fetchData();
-      return function () {
-        controller.abort();
-      };
-    },
-    [query]
-  );
+  const { movies, error, isLoading } = useMovies(query);
 
   return (
     <>
