@@ -2,6 +2,7 @@ import { IWatched, IMovieDetails } from "./interfaces";
 import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
+import { useKey } from "./useKey";
 
 const KEY = "2e5ceddc";
 function MovieDetails({
@@ -55,17 +56,7 @@ function MovieDetails({
 
   const imdbAverage = (Number(imdbRating) + Number(userRating)) / 2;
 
-  useEffect(function () {
-    function callback(e: KeyboardEvent) {
-      if (e.code === "Escape") onBack();
-    }
-
-    document.addEventListener("keydown", callback);
-
-    return function () {
-      document.removeEventListener("keydown", callback);
-    };
-  });
+  useKey("Escape", onBack);
 
   useEffect(
     function () {
