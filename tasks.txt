@@ -39,4 +39,6 @@ Website functionality
   
   - When using "Enter key" it will start to search 
   
-  - create a custom "useMovies" to add effect inside the App
+  - create a custom hook "useMovies" to add effect inside the App
+  - create a custom hook "useLocalStorageState" 
+  
